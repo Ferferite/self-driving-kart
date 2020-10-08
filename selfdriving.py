@@ -12,6 +12,11 @@ def empty(a):
 def exitapp(a):
     exit()
 
+previouslinecount = 0
+linecount = 0
+highlinecount = 0
+highestvalue = 0
+
 minLineLenght = 5
 maxLineGap = 10
 cv2.namedWindow('options')
@@ -45,7 +50,22 @@ while True:
     for x in range(0, len(lines)):
         for x1, y1, x2, y2 in lines[x]:
             cv2.line(imgResult, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    for i in lines:
+        linecount += 1
+    if previouslinecount > linecount:
+        if previouslinecount > highlinecount:
+            highlinecount = previouslinecount
+            highestvalue = h_max
+    elif previouslinecount < linecount:
+        if linecount > highlinecount:
+            highlinecount = linecount
+            highestvalue = h_max
+    if linecount or previouslinecount > highlinecount:
+        print(h_max)
     HorStack = np.hstack((imgresized,imgResult,imgHSV))
     cv2.imshow('Original + Final img + HSV filter', HorStack)
     cv2.imshow('test', imgcanny)
+    print('linecount:{x}\nprevious:{y}\nhighest:{z}\nvalue:{a}'.format(x=linecount, y=previouslinecount, z=highlinecount,a=highestvalue))
+    previouslinecount = linecount
+    linecount = 0
     cv2.waitKey(1)
